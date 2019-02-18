@@ -1,0 +1,2 @@
+# clionprojects
+Projects omsu c++
