@@ -15,9 +15,9 @@ private:
 
 public:
 
-    explicit Vector(int size, int n);
+    explicit Vector(unsigned int size, int n);
 
-    explicit Vector(int size);
+    explicit Vector(unsigned int size);
 
     Vector(Vector &&v) noexcept;
 

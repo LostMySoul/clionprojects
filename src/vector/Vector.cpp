@@ -5,16 +5,16 @@
 #include "Vector.h"
 
 Vector::Vector() {
-    sz = 0;
-    elem = nullptr;
+    sz = 1;
+    elem = new int[1]();
 }
 
-Vector::Vector(int size) {
+Vector::Vector(unsigned int size) {
     sz = size;
     elem = new int[size]();
 }
 
-Vector::Vector(int size, int n) {
+Vector::Vector(unsigned int size, int n) {
     sz = size;
     elem = new int[size];
     for (int i = 0; i < size; i++) {
@@ -27,15 +27,24 @@ Vector::Vector(const Vector &a) : sz(a.sz), elem(new int[sz]) {
         elem[i] = a.elem[i];
 }
 
-Vector::~Vector() {
-    delete[] elem;
+Vector::Vector(Vector &&v) noexcept : elem(nullptr), sz(0) {
+//    sz = v.sz;
+//    elem = v.elem;
+//    v.elem = nullptr;
+//    v.sz = 0;
+    elem = new int[v.sz];
+    for(int i = 0; i < v.sz; i++) {
+        elem[i] = v[i];
+    }
+    this->sz = v.sz;
+    delete[] &v;
 }
 
-Vector::Vector(Vector &&v) noexcept : elem(nullptr), sz(0) {
-    sz = v.sz;
-    elem = v.elem;
-    v.elem = nullptr;
-    v.sz = 0;
+Vector::~Vector() {
+    if (elem) {
+        delete[] elem;
+        sz = 0;
+    }
 }
 
 int Vector::size() const {
@@ -69,31 +78,9 @@ void Vector::swap(Vector &other) noexcept {
     std::swap(sz, other.sz);
 }
 
-const Vector &Vector::operator+(const Vector &other) {
-    Vector newValue(sz + other.sz);
-
-    std::copy(this->elem, this->elem + this->sz, newValue.elem);
-    std::copy(other.elem, other.elem + other.sz, newValue.elem + this->sz);
-
-    newValue.swap(*this);
-    return *this;
-}
-
 Vector &Vector::operator=(Vector v) {
     v.swap(*this);
     return *this;
-}
-
-bool Vector::operator==(const Vector &v) {
-    if (size() != v.size())
-        throw std::out_of_range("Cant check equality of vectors");
-    else {
-        for (int i = 0; i < size(); i++) {
-            if (elem[i] != v[i])
-                return false;
-        }
-    }
-    return true;
 }
 
 Vector &Vector::operator=(Vector &&other) noexcept {
@@ -107,6 +94,18 @@ Vector &Vector::operator=(Vector &&other) noexcept {
     return *this;
 }
 
+bool Vector::operator==(const Vector &v) {
+    if (sz != v.sz)
+        throw std::out_of_range("Cant check equality of vectors");
+    else {
+        for (int i = 0; i < size(); i++) {
+            if (elem[i] != v[i])
+                return false;
+        }
+    }
+    return true;
+}
+
 bool Vector::operator!=(const Vector &v) {
     if (size() != v.size())
         throw std::out_of_range("Cant check equality of vectors");
@@ -117,6 +116,16 @@ bool Vector::operator!=(const Vector &v) {
         }
     }
     return false;
+}
+
+const Vector &Vector::operator+(const Vector &other) {
+    Vector newValue(sz + other.sz);
+
+    std::copy(this->elem, this->elem + this->sz, newValue.elem);
+    std::copy(other.elem, other.elem + other.sz, newValue.elem + this->sz);
+
+    newValue.swap(*this);
+    return *this;
 }
 
 std::ostream &operator<<(std::ostream &out, const Vector &v) {
@@ -139,18 +148,35 @@ std::istream &operator>>(std::istream &in, Vector &v) {
 }
 
 
+int compare(int *arr1, int *arr2, int size1, int size2) {
+    int size;
+    if (size1 == size2) size = size1;
+    else if (size1 < size2) size = size1;
+    else size = size2;
+    for (int i = 0; i < size; i++) {
+        if (arr1[i] > arr2[i]) {
+            return 1;
+        } else if (arr1[i] < arr2[i]) {
+            return -1;
+        }
+    }
+    if (size1 == size2) return 0;
+    else if (size1 < size2) return -1;
+    else return 1;
+}
+
 bool Vector::operator<(const Vector &v) {
-//todo: end
+    return (compare(elem, v.elem, sz, v.sz) < 0);
 }
 
 bool Vector::operator<=(const Vector &v) {
-
+    return (compare(elem, v.elem, sz, v.sz) <= 0);
 }
 
 bool Vector::operator>(const Vector &v) {
-
+    return (compare(elem, v.elem, sz, v.sz) > 0);
 }
 
 bool Vector::operator>=(const Vector &v) {
-
+    return (compare(elem, v.elem, sz, v.sz) >= 0);
 }
