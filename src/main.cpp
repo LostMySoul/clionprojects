@@ -17,12 +17,16 @@ int main() {
     std::cout << v2 << std::endl;
     vcopy[2] = 1;
     std::cout << vcopy << std::endl;
-
     vcopy.resize(2);
     std::cout << vcopy << std::endl << std::endl << std::endl;
-//    Vector moved = Vector(v);
-//    std::cout << v << std::endl;
-//    std::cout << moved << std::endl;
+    std::cout << std::endl << "----------------------";
+    Vector toMove;
+    toMove = Vector(3, 3);
+    std::cout << std::endl << "vector to move:" << std::endl << toMove << std::endl;
+    Vector moved(std::move(toMove));
+    std::cout << std::endl << "moved:" << std::endl << moved << std::endl;
+    std::cout << std::endl << "vector after move:" << std::endl << toMove;
+    std::cout << std::endl << "----------------------" << std::endl;
     v = v2;
     std::cout << v << std::endl;
 

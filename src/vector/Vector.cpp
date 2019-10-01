@@ -28,16 +28,10 @@ Vector::Vector(const Vector &a) : sz(a.sz), elem(new int[sz]) {
 }
 
 Vector::Vector(Vector &&v) noexcept : elem(nullptr), sz(0) {
-//    sz = v.sz;
-//    elem = v.elem;
-//    v.elem = nullptr;
-//    v.sz = 0;
-    elem = new int[v.sz];
-    for(int i = 0; i < v.sz; i++) {
-        elem[i] = v[i];
-    }
-    this->sz = v.sz;
-    delete[] &v;
+    sz = v.sz;
+    elem = v.elem;
+    v.elem = nullptr;
+    v.sz = 0;
 }
 
 Vector::~Vector() {
@@ -78,19 +72,18 @@ void Vector::swap(Vector &other) noexcept {
     std::swap(sz, other.sz);
 }
 
-Vector &Vector::operator=(Vector v) {
-    v.swap(*this);
-    return *this;
-}
+Vector &Vector::operator=(Vector &v) = default;
 
 Vector &Vector::operator=(Vector &&other) noexcept {
     if (this != &other) {
         delete[] elem;
 
         sz = other.sz;
-        elem = new int[sz];
-        std::copy(other.elem, other.elem + sz, elem);
+        elem = other.elem;
+        other.elem = nullptr;
+        other.sz = 0;
     }
+    std::cout << std::endl << "TRIGGERED MOVE ASSIGNMENT" << std::endl;
     return *this;
 }
 

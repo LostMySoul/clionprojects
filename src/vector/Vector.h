@@ -31,15 +31,15 @@ public:
 
     int size() const;
 
-    Vector &operator=(Vector v);
+    Vector &operator=(Vector &&other) noexcept;
+
+    Vector &operator=(Vector &v);
 
     bool operator==(const Vector &v);
 
     const Vector &operator+(const Vector &);
 
     bool operator!=(const Vector &v);
-
-    Vector &operator=(Vector &&other) noexcept;
 
     void resize(int newSize);
 
